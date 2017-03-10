@@ -2,6 +2,9 @@ var vorpal = require('vorpal')();
 var waves = require('waves.js/dist/waves');
 var chalk = require('chalk');
 
+var Wallet = require('./wallet.js').Wallet;
+var wallet = new Wallet();
+
 const networkParams = waves.default.MainNetParameters();
 const host = 'https://nodes.wavesnodes.com/';
 const Waves = new waves.default(networkParams);
@@ -57,15 +60,28 @@ vorpal
     });
 
 vorpal
+    .command('wallet list', 'List addresses in wallet')
+    .action(function(args, cb){
+       this.log(wallet.addresses());
+       cb();
+    });
+
+vorpal
+    .command('wallet import <seed>', 'Import seed into wallet')
+    .action(function(args, cb){
+       cb();
+    });
+
+vorpal
     .command('height', 'Get current height')
     .action(function (args) {
         const self = this;
         return rpc.getHeight()
             .then(function (height) {
-                self.log(height);
+                self.log(chalk.bold('Current Height: ') + height);
             });
-
     });
+
 vorpal
     .delimiter('waves#')
     .show();
