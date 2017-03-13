@@ -40,6 +40,15 @@ function blockHandler(self, args) {
     return future;
 };
 
+function txsHandler(self, args) {
+    const address = args.address;
+    const future = rpc.getAddressTransactions(address)
+        .then(function (txs) {
+            self.log(txs);
+        });
+    return future;
+};
+
 vorpal
     .command('status', 'Get node version and status')
     .action(function (args, callback) {
@@ -55,8 +64,7 @@ vorpal
 vorpal
     .command('block <height>', 'Get block')
     .action(function (args, cb) {
-        blockHandler(this, args);
-        cb();
+        return blockHandler(this, args);
     });
 
 vorpal
@@ -81,6 +89,13 @@ vorpal
                 self.log(chalk.bold('Current Height: ') + height);
             });
     });
+
+vorpal
+   .command('txs <address>', 'Get last transactions for address')
+   .action(function(args, cb) {
+     txsHandler(this, args);
+     cb();
+   });
 
 vorpal
     .delimiter('waves#')
